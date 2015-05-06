@@ -47,7 +47,12 @@ exports.answer = function (req,res){
 
 //GET /quizes
 exports.index = function(req,res){
-	models.Quiz.findAll().then(function(quizes){
+	var search = req.query.search;
+	if (search !== undefined){
+		search = search.replace(" ","%");
+		search = "%"+search+"%";
+	}
+	models.Quiz.findAll({where: ["pregunta like ?", search]}).then(function(quizes){
 		res.render('quizes/index.ejs',{quizes:quizes});
 	})
 };
