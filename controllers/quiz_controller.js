@@ -30,14 +30,21 @@ exports.load = function(req, res, next, quizId) {
 };
 
 // GET /quizes
+//GET /user/:userId/quizes
 exports.index = function(req, res) {
+  var options = {};
+  if(req.user){ //req.user es creado por autoload del usuario
+    //si la ruta lleva el parámetro .quizId
+    options.where = {UserId: req.user.id}
+  }
+
 if(req.query.search){
   models.Quiz.findAll({where: ["pregunta like ?", '%' + req.query.search + '%']}).then(function(quizes) {
     res.render('quizes/index', { quizes: quizes, errors: []});
   });
 }
 else{
-  models.Quiz.findAll().then(function(quizes) {
+  models.Quiz.findAll(options).then(function(quizes) {
     res.render('quizes/index.ejs', { quizes: quizes, errors: []});
   });
 }
